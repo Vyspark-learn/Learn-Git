@@ -1,0 +1,201 @@
+TLDR - command prompt lines and git commands
+    Change folder path (cd)
+        cd C:\users\myname\Documents
+    Verify Git installation, config setup, and config info. See Steps 3 and 4
+        git --version
+        git config --global user.name testusername
+        git config --global user.email testuseremail@testuseremail.com
+        git config user.name
+        git config user.email
+    Create a repo, see step6
+        git init
+    Check file status, stage files(add), and remove(rm) from staging area, see step7
+        git status
+        git add try1.txt
+        git add .                       # this adds all files in current directory to staging area
+        git rm --cached try1.txt
+    Commit to repo and see what is in the repo, see step8
+        git commit -m "short description of changes"
+        git log                         # see details of all the different commits with full alphanum key
+        git log --oneline               # see one line short description with shortened alphanum key
+    Checkout/Revert/Reset a Commit, see step9
+        git checkout 14e13e9            # use len 7 short key
+        git checkout main               # go back to the main (aka 'master') branch
+        git revert 14e13e9              # creates a new commit where the specified commit is undone/removed
+        :wq                             # this exits the UNIX screen
+        git reset 14e13e9               # caution: soft reset deletes all subsequent commits, but keeps all files in repo directory for potential re-staging
+        git reset 14e13e9 --hard        # caution: hard reset deletes all subsequent commits and files
+    Branches, see step 10
+        git branch feature1             # Create and name a new branch, example feature1
+        git branch -a                   # Show all branches
+        git checkout feature1           # Switch between branches
+        git checkout main               # Switch back to the main ('master') branch
+        git branch -D feature1          # Delete a branch (capital d "D")
+        git checkout -b feature2        # Create a new branch and check it out, using one command line
+        git merge feature1              # Merge branch back into master branch, must be in the main branch first
+        merge output: "Fast Forward" means we are accepting everything freom the new branch
+        merge output: "recursive strategy" means that feature2 didn't have everything from main branch (including feature1 updates)
+        If merge error, see step 10
+    
+
+
+More details...
+
+Step 1 - Get Git
+    Download Git from git-scm.com/downloads
+    Use defaults
+
+Step 2 - Find text editor and command prompt
+    Net Ninja used Atom text editor and Cmder
+    You're using VSCode and default Windows command prompt cmd.exe
+
+Step 3 - verify you have Git installed
+    Open command prompt
+        git --version
+    If there's an error, there's a problem.  Otherwise you're good.
+
+Step 4 - setup username and email
+    Open command prompt
+        git config --global user.name testusername
+        git config --global user.email testuseremail@testuseremail.com
+    Check to make sure everything's right
+        git config user.name
+        git config user.email
+
+Step 5 - How Git works
+    "Repo" = repository, stored locally or on GitHub
+    Git tracks repo, great for version control
+    folder on your computer with a *.git file means it (and subfolders) are in a git repo
+
+    "Commit" is like a 'save point' on video game
+    "Staging" = you think you're done so you get the file ready to be "Committed"
+    File goes from Modifying --> Staged --> Commit
+
+    Each Commit is saved along a "Branch"
+    The main primary branch is default: "master"
+    Instead of "master" you can name it something else like "main"
+    See more about branches in later steps
+
+Step 6 - Create a repo 
+    Go to folder where you want to create a repo
+    Create a new subfolder with the folder name of what you want the repo to be called
+      Example <folderpath> = C:\Users\myname\Documents\GitHub\learngit1  
+        cd <folderpath>   # Note: exclude the angles <>
+        git init
+    You now have a repo named "learngit1" located at folderpath
+
+Step 7 - Staging a file
+    Make sure you're in the main repo folder
+        cd <folderpath>/learngit1
+    Save a file in the main repo folder, eg try1.txt
+    Get status of files we've changed and which files are in staging area
+        git status
+    Red text means files are being changed, not in staged area
+    When ready to put file into staging area
+        get add try1.txt
+    Get status again to see which files are in staging area
+        git status
+    Green text means the file is ready in staging area
+    To remove file from staging area
+        git rm --cached try1.txt
+    To add all files to staging area without having to do separate command for each file
+        git add .
+
+Step 8 - Commit files to repo
+    Once you have exactly what you want in staging area to be committed to the repo
+    Use single dash (-) and double quotes ""
+    Make sure message (-m) is descriptive and short
+        git commit -m "added try1.txt"
+    Output will be summary of changes with alphanumeric key shortened to length = 7.  full key is shown in log (git log)
+        example output on "main" branch: [main (root-commit) 14e13e9] added try1.txt; 1 file changed, 3 insertions(+)
+    Note: changes to a line of code are actually handled as a combo: deletion then addition of that line.
+        If you run into errors merging files, its prob bc of this delete/add 
+    Find list of all commits with details and long key (see first 7 chars for short key)
+        git log
+    Find list of all commits with only short description and short key
+        git log --oneline
+    Note: log lists commits with recent at top of list and oldest at bottom of list
+    
+Step 9 - How to go back along a branch to find previous commits
+    Three different ways to go back down the branch
+        Checkout = go take a look.  This is very safe.
+        Revert = go take a look and pretend the commit didnt happen.  Somewhat safe.
+        Reset = go back to a commit, and delete all subsequent commits.  Use extreme caution
+    Must have short key (len = 7)
+        git log --oneline
+    Example short key: 14e13e9
+    
+
+    Go take a look at a previous commit (ie detach from main branch).  This temp changes everything to point in time when this commit happened:
+        git checkout 14e13e9
+    To get back to main branch.  Replace 'main' with 'master' or whatever the primary branch is called:
+        git checkout main
+    
+
+    Go back to a previous commit and remove only that one commit
+        git revert 14e13e9
+    This opens a UNIX screen, to verify that you actually want to revert
+    Technically, the UNIX screen is telling you that a new commit is happening
+    No action is required on UNIX screen, just exit
+    To exit UNIX
+        :wq
+    Check the log to see what was reverted
+        git log --oneline
+
+
+    Go back to a prev commit, and remove all subsequent commits
+        git reset 14e13e9
+        git log --oneline
+    This shows you the remaining commits.
+    Note that all the files that were deleted bc of the reset are still in the repo folder
+        This is your last chance to stage and re-commit.
+    To hard-delete everything and go back to square-one from that commit
+        git reset 14e13e9 --hard
+        git log --oneline
+
+
+Step 10 - Branches
+    Use branches to try out different commits, make sure they are stable, and then merge back into main branch
+    Branches are very helpful when you want to try something out without worrying about messing up the main branch
+    Also good for collaborating with others. You can work on one piece of project while someone else works on another piece
+    
+    Create and name a new branch, example feature1
+        git branch feature1
+    Show all branches
+        git branch -a
+        output: asterisk (*) with green text is the branch that you are currently in
+    Switch between branches
+        git checkout feature1
+        git branch -a
+    Switch back to the main ('master') branch
+        git checkout main
+        git branch -a
+    Delete a branch (capital d "D")
+        git branch -D feature1
+    Create a new branch and check it out, using one command line
+        git checkout -b feature2
+    
+    Merge branch back into master branch
+    Must be in the main branch first
+        git checkout main
+        git merge feature1
+        output: "Fast Forward" means we are accepting everything freom the new branch
+        git merge feature2
+        output: "recursive strategy" means that feature2 didn't have everything from main branch (including feature1 updates)
+    If there is an error with merge, output will show 'conflict'
+    Go to file(s) with conflicts, and update/save them to how you want them to be
+    Then, add to staging, commit without message, exit UNIX, and review log
+        git add .
+        git commit   # do not type -m "stuff", it is not needed
+        :wq          # exits UNIX screen
+        git log --oneline    
+    
+
+
+    
+        
+
+
+    
+    
+
